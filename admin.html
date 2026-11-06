@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="robots" content="noindex">
+<title>COLIZEUM Бэк-офис</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Russo+One&display=swap">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <a class="brand" href="index.html" title="На сайт"><img class="mark" src="img/logo.png" alt=""><img class="word" src="img/wordmark.png" alt="COLIZEUM"></a>
+    <div class="tag">БЭК-ОФИС</div>
+    <nav class="menu" id="menu" aria-label="Разделы бэк-офиса">
+      <button type="button" data-view="certs"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 10h8M8 14h4"/></svg>Сертификаты и карты<span class="count" id="cnt-certs">0</span></button>
+      <button type="button" data-view="sms"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg>Новая рассылка</button>
+      <button type="button" data-view="history"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4"/><path d="M12 8v4l3 2"/></svg>История<span class="count" id="cnt-mail">0</span></button>
+      <button type="button" data-view="black"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>Чёрный список<span class="count" id="cnt-black">0</span></button>
+      <button type="button" data-view="promos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9H3z"/><path d="M9 20v-6h6v6"/></svg>Акции сайта<span class="count" id="cnt-promos">0</span></button>
+      <button type="button" data-view="config"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.3 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>Подключение</button>
+    </nav>
+    <div class="foot">
+      <div class="bal"><span>Баланс СМС (демо)</span><b id="bal-side">—</b></div>
+      <a href="index.html">← На сайт клуба</a>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ===== СЕРТИФИКАТЫ И КАРТЫ ===== -->
+    <section class="view" id="view-certs" hidden>
+      <div class="vhead"><div><h1>Сертификаты и карты</h1><p>Выберите тип документа, заполните поля и проверьте обе стороны. Затем выдайте документ и скачайте картинки для печати или отправки.</p></div>
+        <div class="seg" id="doc-mode" role="group" aria-label="Тип документа"><button type="button" data-v="cert" aria-pressed="true">Подарочный сертификат</button><button type="button" data-v="card" aria-pressed="false">Корпоративная карта</button></div></div>
+      <div class="cols">
+        <div class="stack">
+          <form class="panel" id="cert-form" autocomplete="off">
+            <h2 id="form-title">Новый сертификат</h2>
+            <p class="sub" id="form-sub">Дата окончания считается сама: дата выдачи плюс срок действия.</p>
+            <div class="stack" style="gap:14px">
+              <div class="stack" data-mode="cert" style="gap:14px">
+                <div class="f"><span class="lbl">Номинал</span><div class="chips" id="amount-chips"></div></div>
+                <div class="grid2">
+                  <div class="f"><label for="c-amount">Сумма</label><input type="number" id="c-amount" min="1" step="1" value="50" inputmode="numeric"></div>
+                  <div class="f"><label for="c-cur">Валюта</label><input type="text" id="c-cur" value="BYN" maxlength="6"></div>
+                </div>
+              </div>
+              <div class="stack" data-mode="card" style="gap:14px" hidden>
+                <div class="f"><label for="k-name">Название компании</label><input type="text" id="k-name" maxlength="40" placeholder="Например, Белоруснефть"></div>
+                <div class="f"><span class="lbl" id="k-lbl">Логотип компании</span>
+                  <div class="row" id="k-logoUp" style="flex-wrap:nowrap">
+                    <img id="k-thumb" alt="Загруженный логотип" hidden style="width:52px;height:52px;border-radius:10px;background:#fff;object-fit:contain;padding:5px;flex:none">
+                    <label class="btn quiet" for="k-logo" style="flex:1;border-style:dashed;cursor:pointer" id="k-dropTxt">Выбрать файл</label>
+                    <input type="file" id="k-logo" aria-labelledby="k-lbl" accept="image/png,image/jpeg,image/svg+xml,image/webp" hidden>
+                    <button type="button" class="btn sm quiet" id="k-rm" hidden>Убрать</button>
+                  </div>
+                  <span class="hint">PNG, JPG, SVG или WebP до 2 МБ. На карте логотип лежит на белой подложке.</span>
+                  <span class="err" id="k-e-logo" hidden></span></div>
+                <div class="f"><label for="k-u1">Ссылка для QR «Бронируй ПК»</label><input type="url" id="k-u1" placeholder="https://"></div>
+                <div class="f"><label for="k-u2">Ссылка для QR «Акции в Instagram»</label><input type="url" id="k-u2" placeholder="https://"><span class="hint">Если оставить пустыми, QR-коды будут декоративными.</span></div>
+              </div>
+              <div class="grid2">
+                <div class="f"><label for="c-issue">Дата выдачи</label><input type="date" id="c-issue"></div>
+                <div class="f"><label for="c-num" id="c-num-lbl">Номер сертификата</label><input type="text" id="c-num" class="mono"></div>
+              </div>
+              <div class="stack" data-mode="cert" style="gap:14px">
+                <div class="grid2">
+                  <div class="f"><label for="c-days">Срок действия, дней</label><input type="number" id="c-days" min="1" value="30" inputmode="numeric"></div>
+                  <div class="f"><label>Действителен до</label><div class="note" id="c-until" style="min-height:42px;display:flex;align-items:center">—</div></div>
+                </div>
+                <div class="grid2">
+                  <div class="f"><label for="c-name">Получатель (по желанию)</label><input type="text" id="c-name" placeholder="Имя"></div>
+                  <div class="f"><label for="c-phone">Телефон получателя</label><input type="text" id="c-phone" placeholder="+375 29 123-45-67" inputmode="tel"><span class="err" id="c-phone-err" hidden></span></div>
+                </div>
+                <div class="f"><label for="c-note">Текст на обороте под заголовком</label><input type="text" id="c-note" value="Игры, люди, эмоции — оплатите время за любым ПК клуба."></div>
+                <div class="f"><label for="c-small">Условия мелким шрифтом</label><textarea id="c-small" style="min-height:70px">Использование однократное. Не подлежит обмену на наличные. Предъявите сертификат администратору клуба.</textarea></div>
+              </div>
+              <div class="f"><label for="c-acc">Акцентный цвет</label>
+                <div class="row"><input type="color" id="c-acc" value="#ffd21a">
+                  <div class="chips" id="acc-presets" role="group" aria-label="Готовые цвета"></div></div></div>
+              <div class="row">
+                <button class="btn primary" type="submit" id="c-issue-btn">Выдать сертификат</button>
+                <button class="btn quiet" type="button" id="c-reset">Очистить форму</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="stack">
+          <div class="panel">
+            <div class="row between" style="margin-bottom:12px">
+              <h2>Предпросмотр</h2>
+              <div class="row">
+                <button class="btn sm" type="button" data-dl="front">Скачать лицевую</button>
+                <button class="btn sm" type="button" data-dl="back">Скачать оборотную</button>
+                <button class="btn sm quiet" type="button" data-dl="sheet">Обе стороны на листе</button>
+              </div>
+            </div>
+            <div data-mode="cert">
+              <p class="sidelbl">Лицевая сторона</p>
+              <div class="certbox" id="box-front"><div class="scaler" id="scaler-front"></div></div>
+              <p class="sidelbl" style="margin-top:16px">Оборотная сторона</p>
+              <div class="certbox" id="box-back"><div class="scaler" id="scaler-back"></div></div>
+            </div>
+            <div data-mode="card" hidden>
+              <p class="sidelbl">Лицевая сторона</p>
+              <canvas id="cF" class="cardcv" aria-label="Лицевая сторона карты"></canvas>
+              <p class="sidelbl" style="margin-top:16px">Оборотная сторона</p>
+              <canvas id="cB" class="cardcv" aria-label="Оборотная сторона карты"></canvas>
+            </div>
+            <div class="note" style="margin-top:14px" id="dl-help">Картинки сохраняются в высоком разрешении. После нажатия появится окно подтверждения сохранения. Если файл не скачался, ниже появится картинка: нажмите на неё правой кнопкой и выберите «Сохранить как».</div>
+            <div id="dl-result" style="margin-top:12px" hidden></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:20px">
+        <div class="row between"><div><h2>Журнал выданных</h2><p class="sub" style="margin:0">Сертификаты и корпоративные карты. Данные хранятся в этом браузере.</p></div>
+          <div class="chips" id="j-filter" role="group" aria-label="Фильтр журнала"><button type="button" class="chip" data-f="all" aria-pressed="true">Все</button><button type="button" class="chip" data-f="cert" aria-pressed="false">Сертификаты</button><button type="button" class="chip" data-f="card" aria-pressed="false">Карты</button></div></div>
+        <div class="tablewrap" style="margin-top:14px"><table>
+          <thead><tr><th>Тип</th><th>Номер</th><th>Кому</th><th class="num">Номинал</th><th>Выдан</th><th>Действует до</th><th>Статус</th><th></th></tr></thead>
+          <tbody id="cert-rows"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ===== СМС-РАССЫЛКА ===== -->
+    <section class="view" id="view-sms" hidden>
+      <div class="vhead"><div><h1>Новая СМС-рассылка</h1><p>Соберите получателей и текст, проверьте запрос к SmartDelivery и отправьте. В демо-режиме СМС реально не уходят.</p></div></div>
+      <div class="cols sms">
+        <div class="stack">
+          <div class="panel">
+            <h2>1. Получатели</h2>
+            <p class="sub">По одному на строку: телефон, затем через «;» имя (по желанию). Подойдут форматы +375 29 123-45-67, 8029…, 29…</p>
+            <div class="f"><label for="s-rcpt" class="lbl">Список номеров</label>
+              <textarea id="s-rcpt" placeholder="+375 29 123-45-67; Иван&#10;+375 44 765-43-21; Анна&#10;80336543210"></textarea></div>
+            <div class="row between" style="margin-top:10px">
+              <div class="row"><label class="btn sm quiet" for="s-file" style="cursor:pointer">Загрузить CSV или TXT</label><input type="file" id="s-file" accept=".csv,.txt,text/plain,text/csv" hidden>
+              <button class="btn sm quiet" type="button" id="s-sample">Подставить пример</button>
+              <button class="btn sm quiet" type="button" id="s-clear-r">Очистить</button></div>
+              <div class="counter" id="s-rcpt-stat"></div>
+            </div>
+            <div id="s-invalid" class="note warn" style="margin-top:12px" hidden></div>
+          </div>
+
+          <div class="panel">
+            <h2>2. Сообщение</h2>
+            <p class="sub">Переменная {name} подставит имя из списка. Если имени нет, будет «гость».</p>
+            <div class="chips" id="s-tpls" style="margin-bottom:12px"></div>
+            <div class="row" style="margin-bottom:12px"><input type="text" id="s-tpl-name" maxlength="40" placeholder="Название шаблона" style="flex:1;min-width:160px" aria-label="Название шаблона"><button class="btn sm" type="button" id="s-tpl-save">Сохранить текст как шаблон</button></div>
+            <div class="f"><label for="s-msg" class="lbl">Текст</label><textarea id="s-msg" style="min-height:130px"></textarea></div>
+            <div class="counter" style="margin-top:8px"><span id="s-len"></span><span><button class="chip" type="button" id="s-ins-name" style="min-height:28px;padding:2px 10px">вставить {name}</button></span></div>
+            <div class="grid3" style="margin-top:14px">
+              <div class="f"><label for="s-rus">Кодировка</label><select id="s-rus"><option value="5">Кириллица (rus=5)</option><option value="0">Транслит (rus=0)</option></select></div>
+              <div class="f"><label for="s-maxparts">Макс. частей</label><input type="number" id="s-maxparts" min="1" max="255" value="3"></div>
+              <div class="f"><label for="s-orig">Отправитель</label><input type="text" id="s-orig" maxlength="15" value="COLIZEUM.BY"><span class="err" id="s-orig-err" hidden></span></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>3. Канал и время</h2>
+            <div class="grid2">
+              <div class="f"><label for="s-route">Маршрут</label>
+                <select id="s-route">
+                  <option value="">СМС (маршрут по умолчанию)</option>
+                  <option value="viber(60)-sms">Viber, затем СМС через 60 с</option>
+                  <option value="vk(180)-sms">VK/OK, затем СМС через 180 с</option>
+                  <option value="whatsapp(86400)">WhatsApp</option>
+                  <option value="custom">Свой маршрут…</option>
+                </select><span class="hint">Формат: канал(ttl)-канал. ttl от 30 до 86400 секунд.</span></div>
+              <div class="f" id="s-custom-wrap" hidden><label for="s-route-custom">Свой маршрут</label><input type="text" id="s-route-custom" class="mono" placeholder="viber(60)-sms"><span class="err" id="s-route-err" hidden></span></div>
+            </div>
+            <div id="s-viber" class="stack" style="margin-top:14px;gap:12px" hidden>
+              <div class="note">Для Viber можно добавить картинку и кнопку.</div>
+              <div class="grid2">
+                <div class="f"><label for="s-img">Ссылка на картинку</label><input type="url" id="s-img" placeholder="https://…/banner.jpg"><span class="hint">.jpg, .png, .gif, .jpeg; файл можно загрузить в контент-хранилище (load_file)</span></div>
+                <div class="f"><label for="s-btnname">Название кнопки</label><input type="text" id="s-btnname" placeholder="Забронировать"></div>
+                <div class="f"><label for="s-btnurl">Ссылка кнопки</label><input type="url" id="s-btnurl" placeholder="https://…"></div>
+                <label class="check" style="align-self:end"><input type="checkbox" id="s-linktext"><span>Показать ссылки текстом<small>link_in_text=1</small></span></label>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="f"><span class="lbl">Когда отправить</span>
+              <div class="seg" id="s-when" role="group" aria-label="Когда отправить"><button type="button" data-v="now" aria-pressed="true">Сразу</button><button type="button" data-v="later" aria-pressed="false">Отложить</button></div></div>
+            <div id="s-sched" class="stack" style="margin-top:14px;gap:12px" hidden>
+              <div class="grid2">
+                <div class="f"><label for="s-start">Начало (МСК)</label><input type="datetime-local" id="s-start"><span class="hint">Не позже чем через 3 суток</span></div>
+                <div class="f"><label for="s-stop">Остановить отправку (МСК)</label><input type="datetime-local" id="s-stop"><span class="hint">Необязательно</span></div>
+              </div>
+              <label class="check"><input type="checkbox" id="s-nextday"><span>Продолжить на следующий день<small>isSendNextDay=1: не успевшие уйти сообщения отправятся завтра в то же время</small></span></label>
+              <label class="check"><input type="checkbox" id="s-localtime"><span>По местному времени абонента<small>isAbonentLocalTime=1</small></span></label>
+              <div class="note">Время Минска (UTC+3) совпадает с московским, пересчитывать не нужно.</div>
+            </div>
+            <div class="divider"></div>
+            <details><summary>Дополнительно</summary><div>
+              <div class="grid2">
+                <div class="f"><label for="s-batch">Название рассылки</label><input type="text" id="s-batch" placeholder="Акция «День пиццы»"><span class="hint">Видно в личном кабинете SmartDelivery (batch_name)</span></div>
+                <div class="f"><label for="s-track">Метка для статусов</label><input type="text" id="s-track" maxlength="40" placeholder="tuesday-pizza"><span class="hint">До 40 символов, вернётся в callback (tracking_data)</span></div>
+              </div>
+              <label class="check" id="s-wantids-wrap"><input type="checkbox" id="s-wantids" checked><span>Вернуть идентификаторы сообщений<small>want_sms_ids=1, нужны для проверки статусов. Недоступно для отложенной отправки.</small></span></label>
+              <label class="check"><input type="checkbox" id="s-ignore"><span>Не проверять формат номеров<small>ignore_phone_format=1: некорректные номера тоже уйдут в очередь и будут оплачены</small></span></label>
+            </div></details>
+          </div>
+        </div>
+
+        <div class="stack" style="position:sticky;top:20px">
+          <div class="panel">
+            <h2>Итог</h2>
+            <div class="summary" style="margin-top:12px">
+              <div><b id="sum-r">0</b><span>получателей</span></div>
+              <div><b id="sum-p">0</b><span>частей на одно СМС</span></div>
+              <div><b id="sum-t">0</b><span>частей всего</span></div>
+              <div><b id="sum-c">—</b><span>стоимость, <span id="sum-cur">BYN</span></span></div>
+            </div>
+            <div class="costbox" id="costbox">
+              <div class="cl"><span>Цена одной части</span><b id="cost-price">0,045 BYN</b></div>
+              <div class="cl"><span>Частей всего</span><b id="cost-parts">0</b></div>
+              <div class="cl total"><span>К списанию</span><b id="cost-total">0,00 BYN</b></div>
+              <div class="cl"><span>Баланс</span><b id="cost-bal">—</b></div>
+              <div class="cl"><span>Останется после отправки</span><b id="cost-left">—</b></div>
+            </div>
+            <p class="hint muted" style="font-size:12.5px;margin-top:10px" id="sum-note"></p>
+            <div id="s-errors" class="note warn" style="margin-top:12px" hidden></div>
+            <div class="row" style="margin-top:14px">
+              <button class="btn primary" type="button" id="s-send" style="flex:1">Отправить рассылку</button>
+            </div>
+            <p class="muted" style="font-size:12.5px;margin-top:10px" id="s-mode-note"></p>
+          </div>
+          <div class="panel">
+            <div class="row between"><h2>Запрос к API</h2><button class="btn sm quiet" type="button" id="s-copy-req">Копировать</button></div>
+            <p class="sub">Так выглядит запрос к multi.php. Реальный запрос кодируется в urlencoded и идёт одной строкой.</p>
+            <pre class="code" id="s-req" tabindex="0"></pre>
+          </div>
+          <div class="panel" id="s-reply-panel" hidden>
+            <h2>Ответ сервера</h2>
+            <pre class="code" id="s-reply" tabindex="0" style="margin-top:12px"></pre>
+            <div class="row" style="margin-top:12px"><button class="btn sm" type="button" id="s-to-history">Открыть в истории</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ИСТОРИЯ ===== -->
+    <section class="view" id="view-history" hidden>
+      <div class="vhead"><div><h1>История рассылок</h1><p>Статусы доставки по каждому сообщению. В боевом режиме их присылает SmartDelivery (callback) или запрашивает бэк-офис пачками по 15 идентификаторов.</p></div>
+        <button class="btn" type="button" id="h-new">Новая рассылка</button></div>
+      <div class="kpis" id="kpis"></div>
+      <div class="panel">
+        <div class="tablewrap"><table>
+          <thead><tr><th>Создана</th><th>Название</th><th>Маршрут</th><th class="num">Получателей</th><th>Итог</th><th></th></tr></thead>
+          <tbody id="mail-rows"></tbody></table></div>
+      </div>
+      <div class="panel drawer" id="detail" hidden></div>
+    </section>
+
+
+    <!-- ===== ЧЁРНЫЙ СПИСОК ===== -->
+    <section class="view" id="view-black" hidden>
+      <div class="vhead"><div><h1>Чёрный список</h1><p>Номера из этого списка автоматически исключаются из любой рассылки и не оплачиваются. Подойдёт для отказавшихся от СМС и неверных номеров.</p></div></div>
+      <div class="cols" style="grid-template-columns:minmax(0,380px) minmax(0,1fr)">
+        <form class="panel" id="b-form" autocomplete="off">
+          <h2>Добавить номера</h2>
+          <div class="stack" style="gap:14px;margin-top:14px">
+            <div class="f"><label for="b-phones">Номера</label><textarea id="b-phones" placeholder="+375 29 123-45-67&#10;80445556677"></textarea><span class="hint">По одному на строку или через запятую</span></div>
+            <div class="f"><label for="b-note">Причина</label><input type="text" id="b-note" maxlength="80" placeholder="Попросил не писать"></div>
+            <div id="b-err" class="note warn" hidden></div>
+            <button class="btn primary" type="submit">Добавить в список</button>
+          </div>
+        </form>
+        <div class="panel">
+          <div class="row between"><h2>В списке</h2><div class="f" style="min-width:200px"><input type="search" id="b-search" placeholder="Поиск по номеру" aria-label="Поиск по номеру"></div></div>
+          <div class="tablewrap" style="margin-top:12px"><table>
+            <thead><tr><th>Телефон</th><th>Причина</th><th>Добавлен</th><th></th></tr></thead>
+            <tbody id="b-rows"></tbody></table></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== АКЦИИ САЙТА ===== -->
+    <section class="view" id="view-promos" hidden>
+      <div class="vhead"><div><h1>Акции сайта</h1><p>Добавляйте и удаляйте акции, назначайте срок. На странице «Акции» показываются только действующие: идущие сейчас, не выключенные и в пределах дат.</p></div>
+        <div class="row"><a class="btn quiet" href="akcii.html" target="_blank" rel="noopener">Открыть страницу акций</a><button class="btn" type="button" id="p-new">Новая акция</button></div></div>
+      <div class="panel">
+        <div class="tablewrap"><table>
+          <thead><tr><th>Акция</th><th>Тип</th><th>Срок</th><th>Статус</th><th></th></tr></thead>
+          <tbody id="p-rows"></tbody></table></div>
+        <p class="muted" style="font-size:12.5px;margin-top:10px">Пока это макет: список хранится в этом браузере. В рабочей версии сайт и бэк-офис будут брать его с сервера.</p>
+      </div>
+      <form class="panel drawer" id="p-form" autocomplete="off" hidden>
+        <div class="row between"><h2 id="p-form-title">Новая акция</h2><button class="btn sm quiet" type="button" id="p-cancel">Закрыть</button></div>
+        <div class="stack" style="gap:14px;margin-top:14px">
+          <div class="grid2">
+            <div class="f"><label for="p-title">Название</label><input type="text" id="p-title" maxlength="80" required></div>
+            <div class="f"><label for="p-cat">Тип</label><select id="p-cat"><option value="season">Сезонная</option><option value="always">Постоянная</option><option value="gift">Подарок</option><option value="events">События</option></select></div>
+          </div>
+          <div class="f"><label for="p-lead">Описание</label><textarea id="p-lead" style="min-height:90px" required></textarea></div>
+          <div class="grid3">
+            <div class="f"><label for="p-start">Начало</label><input type="date" id="p-start"><span class="hint">Пусто: сразу</span></div>
+            <div class="f"><label for="p-end">Окончание (включительно)</label><input type="date" id="p-end"><span class="hint">Пусто: без срока</span></div>
+            <div class="f"><label for="p-img">Картинка</label><select id="p-img"></select></div>
+          </div>
+          <div class="grid2">
+            <div class="f"><label for="p-price">Цена или условие</label><input type="text" id="p-price" maxlength="30" placeholder="100 руб."></div>
+            <div class="f"><label for="p-pricenote">Пояснение к цене</label><input type="text" id="p-pricenote" maxlength="40" placeholder="депозит на одного"></div>
+          </div>
+          <div class="f"><label for="p-list">Пункты списка</label><textarea id="p-list" placeholder="По одному на строку"></textarea></div>
+          <div class="f"><label for="p-note">Примечание</label><input type="text" id="p-note" maxlength="120"></div>
+          <div class="row">
+            <label class="check"><input type="checkbox" id="p-on" checked><span>Показывать на сайте</span></label>
+            <label class="check"><input type="checkbox" id="p-feat"><span>Выделить крупным блоком</span></label>
+          </div>
+          <div id="p-err" class="note warn" hidden></div>
+          <div class="row"><button class="btn primary" type="submit">Сохранить акцию</button></div>
+        </div>
+      </form>
+    </section>
+
+    <!-- ===== ПОДКЛЮЧЕНИЕ ===== -->
+    <section class="view" id="view-config" hidden>
+      <div class="vhead"><div><h1>Подключение к SmartDelivery</h1><p>Параметры доступа и значения по умолчанию для рассылок.</p></div></div>
+      <div class="cols" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+        <div class="stack">
+          <form class="panel" id="cfg-form" autocomplete="off">
+            <h2>Доступ</h2>
+            <div class="stack" style="gap:14px;margin-top:14px">
+              <div class="f"><label for="g-server">Сервер</label><select id="g-server"><option value="main">sds.smstraffic.ru — основной</option><option value="backup">sds2.smstraffic.ru — резервный</option></select><span class="hint">При ошибке 1000 повторите запрос позже или переключитесь на резервный.</span></div>
+              <div class="grid2">
+                <div class="f"><label for="g-login">Логин</label><input type="text" id="g-login" autocomplete="off"></div>
+                <div class="f"><label for="g-pass">Пароль</label><input type="password" id="g-pass" autocomplete="new-password"><span class="hint">Хранится только до закрытия вкладки</span></div>
+              </div>
+              <div class="f"><span class="lbl">Режим</span>
+                <div class="seg" id="g-mode"><button type="button" data-v="demo" aria-pressed="true">Демо, без отправки</button><button type="button" data-v="proxy" aria-pressed="false">Через ваш сервер</button></div></div>
+              <div class="f" id="g-proxy-wrap" hidden><label for="g-proxy">Адрес вашего сервера-посредника</label><input type="url" id="g-proxy" placeholder="https://colizeum.by/api/sms"><span class="hint">Бэк-офис отправит туда POST с параметрами рассылки без логина и пароля. Сервер добавит их сам и перешлёт запрос в SmartDelivery.</span></div>
+              <div class="grid2">
+                <div class="f"><label for="g-orig">Отправитель по умолчанию</label><input type="text" id="g-orig" maxlength="15" value="COLIZEUM.BY"></div>
+                <div class="f"><label for="g-price">Цена одной части, BYN</label><input type="number" id="g-price" min="0" step="0.001" value="0.045"><span class="hint">Стоимость одной части СМС: по ней считается расчёт до отправки</span></div>
+              </div>
+              <div class="row"><button class="btn primary" type="submit">Сохранить</button><button class="btn quiet" type="button" id="g-balance">Проверить баланс</button></div>
+              <div id="g-balance-out" class="code" hidden></div>
+            </div>
+          </form>
+        </div>
+        <div class="stack">
+          <div class="panel">
+            <h2>Как включить боевой режим</h2>
+            <ol style="margin:14px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:10px;color:var(--dim)">
+              <li>Сообщите менеджеру SMS Traffic IP-адрес вашего сервера: доступ к API только по белому списку (иначе ошибка 412).</li>
+              <li>Разместите на сервере небольшой скрипт-посредник. Он принимает запрос бэк-офиса, добавляет login и password и отправляет POST на <span class="mono">/smartdelivery-in/multi.php</span>.</li>
+              <li>Укажите адрес скрипта в поле «Режим → Через ваш сервер».</li>
+              <li>Включите в личном кабинете автоматическое получение статусов и укажите адрес приёма callback.</li>
+            </ol>
+            <div class="note warn" style="margin-top:14px">Логин и пароль не должны храниться в браузере или в коде страницы. Прямой запрос из браузера к SmartDelivery не пройдёт: доступ по IP и ограничения CORS.</div>
+          </div>
+          <div class="panel">
+            <h2>Что приходит в callback</h2>
+            <div class="tablewrap" style="margin-top:12px"><table><tbody>
+              <tr><td class="mono">sms_id</td><td>Идентификатор сообщения</td></tr>
+              <tr><td class="mono">status</td><td>DELIVERED, READ, CLICKED, UNDELIVERED, NOT_ROUTED, SENT</td></tr>
+              <tr><td class="mono">delivery_date</td><td>Дата доставки или последнего изменения</td></tr>
+              <tr><td class="mono">err_code</td><td>Код ошибки канала</td></tr>
+              <tr><td class="mono">tracking_data</td><td>Ваша метка из рассылки (до 40 символов)</td></tr>
+            </tbody></table></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="js/cert-assets.js"></script>
+<script src="js/site-data.js"></script>
+<script src="js/promos-store.js"></script>
+<script src="js/admin-core.js"></script>
+<script src="js/admin-card.js"></script>
+<script src="js/admin-cert.js"></script>
+<script src="js/admin-black.js"></script>
+<script src="js/admin-sms.js"></script>
+<script src="js/admin-promos.js"></script>
+</body>
+</html>
